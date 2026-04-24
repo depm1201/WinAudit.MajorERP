@@ -1,0 +1,23 @@
+services:
+  api:
+    build: .
+    container_name: winaudit-majorerp-api
+    env_file:
+      - .env
+    ports:
+      - "8004:8003"
+    volumes:
+      - ./logs:/app/logs
+      - ./storage:/app/storage
+    restart: unless-stopped
+
+  worker:
+    build: .
+    container_name: winaudit-majorerp-worker
+    env_file:
+      - .env
+    command: ["python", "-m", "app.workers.major_worker"]
+    volumes:
+      - ./logs:/app/logs
+      - ./storage:/app/storage
+    restart: unless-stopped
