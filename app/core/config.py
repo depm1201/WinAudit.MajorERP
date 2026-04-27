@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     APP_PORT: int = 8003
     LOG_LEVEL: str = "INFO"
     DEFAULT_TIMEZONE: str = "America/Guayaquil"
+    ALLOWED_ORIGINS: str = Field(
+        default="http://localhost:3000,http://localhost:5173,http://localhost:8080,http://127.0.0.1:3000,http://127.0.0.1:5173,http://127.0.0.1:8080"
+    )
 
     ADMIN_DB_URL: str = Field(
         default="postgresql+psycopg2://postgres:postgres@localhost:5444/DbWinAuditAdmin"
@@ -37,6 +40,10 @@ class Settings(BaseSettings):
     def logs_path(self) -> Path:
         return self.base_path / "logs"
 
+    @property
+    def allowed_origins(self) -> list[str]:
+        return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",") if origin.strip()]
+
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
@@ -44,4 +51,3 @@ def get_settings() -> Settings:
 
 
 settings = get_settings()
-
