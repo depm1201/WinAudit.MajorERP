@@ -36,6 +36,9 @@ class FakeRepo:
     def list_catalog_accounts(self, session, client_id):
         return self.catalog_rows
 
+    def get_account_mapping_by_target_code(self, session, client_id, account_code):
+        return None
+
     def save_validation_results(self, session, client_id, import_batch_id, rows):
         self.saved_rows.extend(rows)
         return len(rows)
@@ -82,6 +85,6 @@ def test_validate_ledger_detects_unknown_account_and_balance_gap():
     assert summary.validation_status == "VALIDATED_WITH_ERRORS"
     assert summary.errors == 2
     assert summary.warnings == 1
-    assert len(service._repo.saved_rows) == 2
+    assert len(service._repo.saved_rows) == 3
     assert batch.validation_status == "VALIDATED_WITH_ERRORS"
     assert service._repo.deleted_scope == "MAYOR"
