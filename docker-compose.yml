@@ -10,6 +10,8 @@ services:
       - ./logs:/app/logs
       - ./storage:/app/storage
     restart: unless-stopped
+    networks:
+      - winaudit-network-vnc
 
   worker:
     build: .
@@ -21,3 +23,10 @@ services:
       - ./logs:/app/logs
       - ./storage:/app/storage
     restart: unless-stopped
+    networks:
+      - winaudit-network-vnc
+
+networks:
+  winaudit-network-vnc:
+    external: true
+    name: winaudit-network-vnc
