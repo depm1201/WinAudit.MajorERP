@@ -1,4 +1,4 @@
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 
 from app.api.v1.schemas import (
@@ -11,6 +11,7 @@ from app.api.v1.schemas import (
     MajorValidationResponse,
     MajorValidationRunResponse,
 )
+from app.core.auth import verify_token
 from app.core.exceptions import ClientNotFoundError, MajorERPError, StorageError, TenantNotFoundError, ValidationError
 from app.core.tenant_session import get_tenant_session
 from app.repositories.major_repository import MajorRepository
@@ -20,18 +21,13 @@ from app.services.major_mapping_service import MajorMappingService
 from app.services.major_reconciliation_service import MajorReconciliationService
 from app.services.major_validation_service import MajorValidationService
 
-router = APIRouter(tags=["major"])
+router = APIRouter(tags=["major"], dependencies=[Depends(verify_token)])
 repository = MajorRepository()
 service = MajorImportService()
 export_service = MajorExportService()
 validation_service = MajorValidationService()
 mapping_service = MajorMappingService()
 reconciliation_service = MajorReconciliationService()
-
-
-@router.get("/health")
-def api_health():
-    return {"status": "ok", "service": "WinAudit.MajorERP"}
 
 
 @router.post("/major/import", response_model=MajorImportResponse, status_code=202)
